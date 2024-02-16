@@ -1,0 +1,60 @@
+# Docker Notes
+
+## Best Results
+For best results, do not use the docker package supplied by Ubuntu. Instead one can use the
+docker community edition (docker-ce). We will add the official docker apt package repository
+and install docker-ce before running the deploy_sdc.sh script.  
+
+## Install Docker
+1. Make sure apt package cache is up to date and install some docker pre-requisites
+```
+sudo apt update
+sudo apt install apt-transport-https ca-certificates curl software-properties-common
+```
+2. Trust the official docker package repository key
+Only do ONE of the following, depending on your Ubuntu version:
+- Ubuntu < 22.04 (deprecated and less secure key installation)
+ ```
+ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+ ```
+- Ubuntu >= 22.04
+```
+curl -s https://download.docker.com/linux/ubuntu/gpg | sudo gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/docker.gpg --import
+sudo chmod 644 /etc/apt/trusted.gpg.d/docker.gpg
+```
+
+3. Add the official docker package repository as a package source for apt
+In the command below, replace <DISTRO> with the Ubuntu release name. e.g. focal, jammy, etc
+```
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu <DISTRO> stable"
+```
+  
+4. Check that we can access the repository and install
+```
+apt-cache policy docker-ce
+sudo apt install docker-ce
+```
+
+5. Make sure Docker is installed and up and running
+```
+sudo systemctl status docker
+```
+6. Optionally make the current user a docker admin and load the new group permissions
+```
+sudo usermod -aG docker ${USER}
+newgrp docker
+```
+
+## Simplified Example of docker-ce install on Ubuntu 24.02 (jammy):
+```
+sudo apt update
+sudo apt install apt-transport-https ca-certificates curl software-properties-common awscli
+curl -s https://download.docker.com/linux/ubuntu/gpg | sudo gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/docker.gpg --import
+sudo chmod 644 /etc/apt/trusted.gpg.d/docker.gpg
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu jammy stable"
+apt-cache policy docker-ce
+sudo apt install docker-ce
+sudo systemctl status docker
+sudo usermod -aG docker ${USER}
+newgrp docker
+```
