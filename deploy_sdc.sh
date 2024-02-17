@@ -3,11 +3,11 @@
 # The sdc user's home directory
 sdc_home=/usr/local/cdo
 
-# We need to run as root to create user, restart services, and chown files
+# We need the b64 bootstrap payload from CDO as a parameter for the script
 if [ "$#" -ne 1 ]; then
     echo "usage: source sdc_prep.sh [bootstrap data]" >&2
     echo "example: source sdc_prep.sh Q0RPX1RPS0VOPSJleU...Y29fYWFoYWNrbmUtU0RDLTQiCg==" >&2
-    exit 1
+    exit
 fi
 
 # Make sure the bootstrap.sh prerequisite packages are installed
@@ -57,37 +57,42 @@ if [ -f /etc/docker/daemon.json ]; then
   echo $daemon_json
 else
   echo "Writing file /etc/docker/daemon.json"
-  sudo echo $daemon_json >> /etc/docker/daemon.json
+  echo ${daemon_json} > daemon.json
+  sudo cp daemon.json /etc/docker/daemon.json
+  rm daemon.json
 fi
 
 # Restart the docker daemon
 echo "Restarting docker daemon"
 sudo systemctl restart docker
 echo "Docker status after restart:"
-echo $(sudo systemctl status docker | grep 'Active')
+echo sudo systemctl status docker | grep 'Active'
 
 # Decode bootstrap data and extract the needed pieces
 echo "Decoding the bootstrap data..."
 decoded_bootstrap=$(echo "$1" | base64 --decode)
 
 # Write env vars to file for the sdc and also load the vars
-sudo printf '%s\n' "${decoded_bootstrap[@]}" > "$sdc_home/sdcenv"
-printf '%s\n' "${decoded_bootstrap[@]}" > "./sdcenv"
-source "./sdcenv"
-rm "./sdcenv"
+printf '%s\n' ${decoded_bootstrap} > sdcenv
+sudo cp sdcenv ${sdc_home}/sdcenv
+source sdcenv
+rm sdcenv
 
 # Download the bootstrap file from CDO
 echo Downloading CDO Bootstrap File
-sudo curl --output "$sdc_home/${CDO_BOOTSTRAP_URL##*/}" --header "\"Authorization: Bearer $CDO_TOKEN\"" "$CDO_BOOTSTRAP_URL"
+$(sudo curl --output "$sdc_home/${CDO_BOOTSTRAP_URL##*/}" --header "Authorization: Bearer ${CDO_TOKEN}" "$CDO_BOOTSTRAP_URL")
 
 # Untarring CDO Bootstrap file
-sudo tar xzvf "$sdc_home/${CDO_BOOTSTRAP_URL##*/}" --directory "$sdc_home"
+$(sudo tar xzvf "$sdc_home/${CDO_BOOTSTRAP_URL##*/}" --directory "$sdc_home")
+
+# Remove the tar file
+$(sudo rm "$sdc_home/${CDO_BOOTSTRAP_URL##*/}")
 
 # chown the new files to sdc user
-sudo chown --recursive sdc:sdc "$sdc_home"
+$(sudo chown --recursive sdc:sdc "$sdc_home")
 
 # Final check for success and exit
-if [ -f "$sdc_home/bootstrap/bootstrap.sh" ]; then
+if sudo test -f "${sdc_home}/bootstrap/bootstrap.sh"; then
   echo
   echo "***********************************************************************************************"
   echo "SDC pre-configuration scripts appears to have completed successfully."
@@ -95,12 +100,10 @@ if [ -f "$sdc_home/bootstrap/bootstrap.sh" ]; then
   echo "sudo su sdc"
   echo "cd $sdc_home; source $sdc_home/sdcenv; $sdc_home/bootstrap/bootstrap.sh"
   echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-  exit 0
 else
   echo "***********************************************************************************************" >&2
   echo "Something went wrong with the pre-configuration script." >&2
   echo "Post your issue in github and include the output from this script with the debug option enabled" >&2
   echo "bash -x sdc-pre-config.sh" >&2
   echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" >&2
-  exit 3
 fi

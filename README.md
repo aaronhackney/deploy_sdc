@@ -3,6 +3,13 @@ This is a script to simplify installing the Cisco Defense Orchestrator (CDO) Sec
   
 The SDC is just a docker container that facilitates communication between Cisco Adaptive Security Appliance (ASAs) firewalls, Cisco IOS Devices (Routers and Switches), and other SSH based integrations.
 
+## TLDR; For the impatient
+DO NOT RUN AS ROOT!
+```
+./deploy_sdc.sh Q0RPX1RPS0VOPSJleU...Y29fYWFoYWNrbmUtU0RDLTQiCg==
+```
+Where `Q0RPX1RPS0VOPSJleU...Y29fYWFoYWNrbmUtU0RDLTQiCg==` is your SDC bootstrap data from the CDO portal.
+
 ## Ubuntu system requirements
 This script was written using Ubuntu 22.04 as the test system. Your milage may vary on older Ubuntu releases.  
   
@@ -33,10 +40,10 @@ The SDC is a container that runs in docker. See the README-DOCKER.md file for mo
 8. Download the `bootstrap.sh` script from CDO specific to your tenant and uncompress the tar file
 
 ## How to run the deploy_sdc.sh script
-We will sudo run the `deploy_sdc.sh` with the `CDO Bootstrap Data` that you copied from the CDO tenant portal as the only parameter for the script. Note that the `CDO Bootstrap Data` will wrap several lines in your terminal. This is fine and there is no need to try and split the data into smaller chunks.
+We will run the `deploy_sdc.sh` with the `CDO Bootstrap Data` that you copied from the CDO tenant portal as the only parameter for the script. Note that the `CDO Bootstrap Data` will wrap several lines in your terminal. This is fine and there is no need to try and split the data into smaller chunks.
 Example:
 ```
-sudo ./sdc_prep.sh Q0RPX1RPS0VOPSJleU...Y29fYWFoYWNrbmUtU0RDLTQiCg==
+./deploy_sdc.sh Q0RPX1RPS0VOPSJleU...Y29fYWFoYWNrbmUtU0RDLTQiCg==
 ```
 
 ## Download and run the containers
