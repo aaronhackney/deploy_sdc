@@ -1,4 +1,5 @@
 #!/bin/bash
+
 echo "Installing docker-ce"
 
 # Install needed packages to add docker-ce apt repository
