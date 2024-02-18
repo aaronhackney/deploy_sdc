@@ -74,9 +74,8 @@ decoded_bootstrap=$(echo "$1" | base64 --decode)
 
 # Write env vars to file for the sdc and also load the vars
 printf '%s\n' ${decoded_bootstrap} > sdcenv
-sudo cp sdcenv ${sdc_home}/sdcenv
 source sdcenv
-rm sdcenv
+sudo mv sdcenv ${sdc_home}/sdcenv
 
 # Download the bootstrap file from CDO
 echo Downloading CDO Bootstrap File
