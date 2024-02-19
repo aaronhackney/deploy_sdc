@@ -8,11 +8,12 @@ and install docker-ce before running the deploy_sdc.sh script.
 ## Scripted install of docker-ce
 All of the below steps are captured in the script `install_docker.sh` and presumes the user is running Ubuntu 22.04 (Jammy)
 Usage:
+DO NOT RUN AS ROOT!
 ```
-source install_docker.sh
+./install_docker.sh
 ```
 
-## Manual Docker install
+## Manual Steps Docker install (Alternative to using the `install_docker.sh` script)
 1. Make sure apt package cache is up to date and install some docker pre-requisites
 ```
 sudo apt update
