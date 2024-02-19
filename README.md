@@ -45,10 +45,3 @@ Example:
 ```
 ./deploy_sdc.sh Q0RPX1RPS0VOPSJleU...Y29fYWFoYWNrbmUtU0RDLTQiCg==
 ```
-
-## Download and run the containers
-If everything was successful, you should be ready to execute the bootstrap script that configures, loads, and runs the SDC docker image.
-```
-sudo su sdc
-cd /usr/local/cdo/; source sdcenv; /usr/local/cdo/bootstrap/bootstrap.sh
-```
