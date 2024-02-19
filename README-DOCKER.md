@@ -6,9 +6,9 @@ docker community edition (docker-ce). We will add the official docker apt packag
 and install docker-ce before running the deploy_sdc.sh script.  
 
 ## Scripted install of docker-ce
-All of the below steps are captured in the script `install_docker.sh` and presumes the user is running Ubuntu 22.04 (Jammy)
-Usage:
-DO NOT RUN AS ROOT!
+All of the below steps are captured in the script `install_docker.sh` and presumes the user is running Ubuntu 22.04 (Jammy)  
+Usage:  
+DO NOT RUN AS ROOT!  
 ```
 ./install_docker.sh
 ```
