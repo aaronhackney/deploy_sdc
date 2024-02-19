@@ -27,7 +27,7 @@ The SDC is a container that runs in docker. See the README-DOCKER.md file for mo
 ## Create the SDC in your CDO tenant
 1. Log into your CDO Tenant and navigate to Tools & Services --> Secure Connectors
 2. Click the blue (+) button and add a Secure Device Connector (SDC)
-3. Copy the `CDO Bootstrap Data` text string and paste it in text document for reference later
+3. Copy the `CDO Bootstrap Data` to use as a CLI parameter for the script.
 
 ## What does the deploy_sdc.sh script do?
 1. Checks to make sure the required apt packages are installed (awscli and net-tools) and install them if they are not present.
