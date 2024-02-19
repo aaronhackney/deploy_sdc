@@ -75,30 +75,40 @@ decoded_bootstrap=$(echo "$1" | base64 --decode)
 # Write env vars to file for the sdc and also load the vars
 printf '%s\n' ${decoded_bootstrap} > sdcenv
 source sdcenv
-sudo mv sdcenv ${sdc_home}/sdcenv
+rm sdcenv
 
 # Download the bootstrap file from CDO
 echo Downloading CDO Bootstrap File
-$(sudo curl --output "$sdc_home/${CDO_BOOTSTRAP_URL##*/}" --header "Authorization: Bearer ${CDO_TOKEN}" "$CDO_BOOTSTRAP_URL")
+sudo curl --output "$sdc_home/${CDO_BOOTSTRAP_URL##*/}" --header "Authorization: Bearer ${CDO_TOKEN}" "$CDO_BOOTSTRAP_URL"
 
 # Untarring CDO Bootstrap file
-$(sudo tar xzvf "$sdc_home/${CDO_BOOTSTRAP_URL##*/}" --directory "$sdc_home")
+sudo tar xzvf "$sdc_home/${CDO_BOOTSTRAP_URL##*/}" --directory "$sdc_home"
 
 # Remove the tar file
-$(sudo rm "$sdc_home/${CDO_BOOTSTRAP_URL##*/}")
+sudo rm "$sdc_home/${CDO_BOOTSTRAP_URL##*/}"
 
 # chown the new files to sdc user
-$(sudo chown --recursive sdc:sdc "$sdc_home")
+sudo chown --recursive sdc:sdc "$sdc_home"
 
 # Final check for success and exit
 if sudo test -f "${sdc_home}/bootstrap/bootstrap.sh"; then
   echo
   echo "***********************************************************************************************"
   echo "SDC pre-configuration scripts appears to have completed successfully."
-  echo "Run the following commands to start the SDC configration process:"
-  echo "sudo su sdc"
-  echo "cd $sdc_home; source $sdc_home/sdcenv; $sdc_home/bootstrap/bootstrap.sh"
-  echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+  echo "Runing the CDO SDC Bootstrap script to finsh the deployment process:"
+  # Export vars to pass into the bootstrap script via sudo
+  export CDO_TOKEN=$CDO_TOKEN
+  export CDO_DOMAIN=$CDO_DOMAIN
+  export CDO_TENANT=$CDO_TENANT
+  export CDO_BOOTSTRAP_URL=$CDO_BOOTSTRAP_URL
+  export HOME=/usr/local/cdo
+  # Patch common.sh to use absoulte path for needed files...
+  sudo -Eu sdc sed -i '6s/.*/env_dir=$(dirname $(readlink -f $0))/' /usr/local/cdo/bootstrap/common.sh
+  # Execute bootstrap script
+  sudo -Eu sdc ${sdc_home}/bootstrap/bootstrap.sh
+  echo "Check that the docker container 'sdc_prod:ubuntu' is up and running..."
+  sudo -Eu sdc docker ps
+  echo "If the docker container is up and running, the status of the SDC should go to 'Active' in the CDO Event Connectors panel."
 else
   echo "***********************************************************************************************" >&2
   echo "Something went wrong with the pre-configuration script." >&2
