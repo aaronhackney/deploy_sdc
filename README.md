@@ -36,8 +36,8 @@ The SDC is a container that runs in docker. See the README-DOCKER.md file for mo
 4. Add the `sdc` user to the `docker` group to give the `sdc` users permissions to start and stop containers
 5. Check that the `/etc/daemon.json` file exists. If the file does not exist, create it.
 6. Restart the docker daemon and display the docker daemon status. **Note**: If you have existing containers, this restart will impact them.
-7. Write the bootstrap data to the file `/usr/local/cdo/sdcenv` for the bootstrap script to use
-8. Download the `bootstrap.sh` script from CDO specific to your tenant and uncompress the tar file
+7. Download the `bootstrap.sh` script from CDO specific to your tenant and uncompress the tar file
+8. export the bootstrap data as environment variables and pass into and run the bootstrap script
 
 ## How to run the deploy_sdc.sh script
 We will run the `deploy_sdc.sh` with the `CDO Bootstrap Data` that you copied from the CDO tenant portal as the only parameter for the script. Note that the `CDO Bootstrap Data` will wrap several lines in your terminal. This is fine and there is no need to try and split the data into smaller chunks.
