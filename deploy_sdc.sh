@@ -66,7 +66,7 @@ fi
 echo "Restarting docker daemon"
 sudo systemctl restart docker
 echo "Docker status after restart:"
-echo sudo systemctl status docker | grep 'Active'
+echo $(sudo systemctl status docker | grep 'Active')
 
 # Decode bootstrap data and extract the needed pieces
 echo "Decoding the bootstrap data..."
@@ -95,7 +95,7 @@ if sudo test -f "${sdc_home}/bootstrap/bootstrap.sh"; then
   echo
   echo "***********************************************************************************************"
   echo "SDC pre-configuration scripts appears to have completed successfully."
-  echo "Runing the CDO SDC Bootstrap script to finsh the deployment process:"
+  echo "Running the CDO SDC Bootstrap script to finsh the deployment process:"
   # Export vars to pass into the bootstrap script via sudo
   export CDO_TOKEN=$CDO_TOKEN
   export CDO_DOMAIN=$CDO_DOMAIN
